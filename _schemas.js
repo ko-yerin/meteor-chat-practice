@@ -10,15 +10,24 @@ export const rooms = {
   lastUserName: String,
   lastMessage: String,
   updatedAt: Date,
-  joiner: Array(userId),
+  joiner: Array( /* userId */ ),
 }
 
 export const messages = {
   _id: String,
   roomId: String,
   userId: String,
+  username:String,
   userAvatar: String,
   userLevel: Number,
   createdAt: Date,
   message: String,
+}
+
+export const reads = {
+  _id: String,
+  userId: String,
+  roomId: String,
+  lastAt: Date,
+  updatedAt: Date,
 }
