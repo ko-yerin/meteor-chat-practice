@@ -8,6 +8,7 @@ export const rooms = {
   _id: String,
   lastUserId: String,
   lastUserName: String,
+  lastUserAvatar: String,
   lastMessage: String,
   updatedAt: Date,
   joiner: Array( /* userId */ ),
@@ -24,7 +25,7 @@ export const messages = {
   message: String,
 }
 
-export const reads = {
+export const read = {
   _id: String,
   userId: String,
   roomId: String,
