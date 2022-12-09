@@ -21,8 +21,6 @@ Template.chatRoomPage.onRendered(function () {
       const msg_height = scroll.scrollHeight
       scroll.scrollTo(0, msg_height)
     }, 100)
-
-
   })
 })
 
@@ -62,33 +60,23 @@ Template.chatRoomPage.helpers({
   },
 
   text_date(index) {
-    //시간을 표기해야될때 트루
     const roomId = FlowRouter.getParam('_id')
-    // console.log("ibdex",index)
+    const arr = Messages.find({roomId}, {sort: {createdAt: 1}, fields: {userId: true, createdAt: true}}).fetch()
 
-    const arr = Messages.find({roomId}, {sort: {createdAt: -1}, fields: {userId: true, createdAt: true}}).fetch()
+    const alone = arr.length <= 1
+    const differ_person = arr[index].userId !== arr[index + 1]?.userId
 
-    if (arr.length <= 1 || !arr[index-1]) {
-      console.log("1")
+    if (alone || differ_person) {
       return true
     }
 
-    if (arr[index - 1].userId !== arr[index].userId) {
-      console.log("2")
-      return true
-    }
-
+    //같은사람이고 글이 2개이상일떄 아래코드실행
     const timeNow = text_time(arr[index].createdAt)
-    const timeNext = text_time(arr[index - 1].createdAt)
+    const timeNext = text_time(arr[index + 1].createdAt)
+    console.log(index)
+    console.log(timeNow,timeNext)
 
-
-    if (timeNow !== timeNext) {
-      console.log("3")
-      return true
-    }else {
-      console.log("4")
-      return false
-    }
+    return timeNow !== timeNext
   },
 
   getDate(date) {

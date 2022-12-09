@@ -24,15 +24,12 @@
                   <span class="p-2 rounded-2 shadow-sm text-white  {{ text_color item }} ">
                     {{ item.message }}
                   </span>
-                  {{#if text_date @index}}
+                  {{#if text_date @index }}
                     <span class="chat-item p-1">
                       {{ getDate item.createdAt }}
                     </span>
-                  {{else}}
-                    {{ getDate item.createdAt }}
-                    <span class="chat-item p-1">
-                      없다
-                    </span>
+                  {{ else }}
+
                   {{/if}}
                 </div>
               </li>
