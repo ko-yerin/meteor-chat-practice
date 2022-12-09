@@ -1,6 +1,6 @@
-import { Template } from 'meteor/templating'
-import { Messages } from '/imports/collections'
-import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
+import {Template} from 'meteor/templating'
+import {Messages} from '/imports/collections'
+import {FlowRouter} from 'meteor/ostrio:flow-router-extra'
 
 Template.chatRoomPage.onCreated(function () {
   const roomId = FlowRouter.getParam('_id')
@@ -14,7 +14,7 @@ Template.chatRoomPage.onRendered(function () {
 
   this.autorun(function () {
     Messages.find({}).count()
-    Meteor.call('messageReadUpdate',roomId)
+    Meteor.call('messageReadUpdate', roomId)
 
     const scroll = self.find('#scroll-box')
     setTimeout(function () {
@@ -61,10 +61,48 @@ Template.chatRoomPage.helpers({
     }
   },
 
+  text_date(index) {
+    //시간을 표기해야될때 트루
+    const roomId = FlowRouter.getParam('_id')
+    // console.log("ibdex",index)
+
+    const arr = Messages.find({roomId}, {sort: {createdAt: -1}, fields: {userId: true, createdAt: true}}).fetch()
+
+    if (arr.length <= 1 || !arr[index-1]) {
+      console.log("1")
+      return true
+    }
+
+    if (arr[index - 1].userId !== arr[index].userId) {
+      console.log("2")
+      return true
+    }
+
+    const timeNow = text_time(arr[index].createdAt)
+    const timeNext = text_time(arr[index - 1].createdAt)
+
+
+    if (timeNow !== timeNext) {
+      console.log("3")
+      return true
+    }else {
+      console.log("4")
+      return false
+    }
+  },
+
   getDate(date) {
-    return date.toLocaleString()
+    return text_time(date)
   },
 })
+
+function text_time(date) {
+  const hours = date.getHours() % 12 ? date.getHours() % 12 : 12;
+  const minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+  const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
+
+  return `${ampm} ${hours}:${minutes} `;
+}
 
 Template.chatRoomPage.events({
   'click .room_back': function () {
@@ -83,7 +121,7 @@ Template.chatRoomPage.events({
 
   'keyup #chat-box': function (evt, ins) {
     let text = ins.find('#chat-box').value
-    text = text.replace(/^[\s]+$/, "");
+    text = text.replace(/^\s+/, "");
 
     if (evt.keyCode === 13 && text !== "") {
       chat_room(evt, ins)
@@ -99,7 +137,7 @@ function chat_room(evt, ins) {
   let text = ins.find('#chat-box').value
   const roomId = FlowRouter.getParam('_id')
 
-  text = text.replace(/\s/g, "");
+  text = text.replace(/^\s+/, "");
 
   const data = {
     roomId: roomId,
@@ -109,10 +147,10 @@ function chat_room(evt, ins) {
     message: text,
   }
 
-  if (text === '' || text === undefined || text === null) {
+  if (text === "" || text === undefined || text === null) {
     return
   }
 
   Meteor.call('messageInsert', data)
-  ins.find('#chat-box').value = ''
+  ins.find('#chat-box').value = ""
 }
